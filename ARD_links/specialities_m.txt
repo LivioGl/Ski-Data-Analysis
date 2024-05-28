@@ -1,0 +1,4 @@
+https://ski-db.com/db/stats/overall_m_dh.php
+https://ski-db.com/db/stats/overall_m_sg.php
+https://ski-db.com/db/stats/overall_m_gs.php
+https://ski-db.com/db/stats/overall_m_sl.php
