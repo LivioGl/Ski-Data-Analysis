@@ -81,105 +81,228 @@ custom_colors = ['#0000FF', '#607D3B', '#FF0000', '#FFD700', '#FF00FF', '#99CBFF
 # print(WomenWinners)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# @app.callback(
+#     Output("output_graph_men", 'figure'),
+#     Input('select_parameter_men', 'value')
+# )
 @app.callback(
-    Output("output_graph_men", 'figure'),
-    Input('select_parameter_men', 'value')
+    Output('graph_men', 'figure'),
+    [Input('select_parameter_men', 'value')]
 )
-
+# def choose_parameter_men(selected_parameter_men):
+#     if(selected_parameter_men == 'distance from 2nd'):
+#         return px.bar(MenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'distance from 2nd': True}, width=550, height=450)
+#     elif(selected_parameter_men == 'Avg points per race'):
+#         return px.bar(MenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'Avg_Points_per_race':True}, width=550, height=450)
+#     elif(selected_parameter_men == 'Win Rate'):
+#         return px.bar(MenWinners, x='season', y='WinRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'WinRate':True}, width=550, height=450)
+#     else:
+#         return px.bar(MenWinners, x='season', y='PodiumRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'PodiumRate':True}, width=550, height=450)
 def choose_parameter_men(selected_parameter_men):
-    if(selected_parameter_men == 'distance from 2nd'):
-        return px.bar(MenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'distance from 2nd': True}, width=550, height=450)
-    elif(selected_parameter_men == 'Avg points per race'):
-        return px.bar(MenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'Avg_Points_per_race':True}, width=550, height=450)
-    elif(selected_parameter_men == 'Win Rate'):
-        return px.bar(MenWinners, x='season', y='WinRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'WinRate':True}, width=550, height=450)
+    if selected_parameter_men == 'distance from 2nd':
+        fig = px.bar(MenWinners, x='season', y='distance from 2nd', color='Athlete',
+                        color_discrete_sequence=custom_colors,
+                        hover_data={'Wins': True, 'distance from 2nd': True})
+    elif selected_parameter_men == 'Avg points per race':
+        fig = px.bar(MenWinners, x='season', y='Avg_Points_per_race', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'Avg_Points_per_race': True})
+    elif selected_parameter_men == 'Win Rate':
+        fig = px.bar(MenWinners, x='season', y='WinRate', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'WinRate': True})
     else:
-        return px.bar(MenWinners, x='season', y='PodiumRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'PodiumRate':True}, width=550, height=450)
+        fig = px.bar(MenWinners, x='season', y='PodiumRate', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'PodiumRate': True})
+    
+    # Aggiornamento del layout per ridurre la dimensione della legenda
+    fig.update_layout(
+        legend=dict(
+            font=dict(size=10),
+            itemsizing='constant'  # Riduce anche la dimensione dei quadratini della legenda
+        ),
+        margin=dict(l=20, r=20, t=20, b=20),
+        plot_bgcolor='rgba(255, 255, 255, 0.8)',  
+        paper_bgcolor='rgba(255, 255, 255, 0.5)' 
+    )
+    return fig
+
 
 @app.callback(
-    Output("output_graph_women", 'figure'),
+    Output("graph_women", 'figure'),
     Input('select_parameter_women', 'value')
 )
 
 def choose_parameter_women(selected_parameter_women):
-    if(selected_parameter_women == 'distance from 2nd'):
-        return px.bar(WomenWinners, x='season', y='distance from 2nd',color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'distance from 2nd': True}, width=550, height=450)
-    elif(selected_parameter_women == 'Avg points per race'):
-        return px.bar(WomenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'Avg_Points_per_race': True}, width=550, height=450)
-    elif(selected_parameter_women == 'Win Rate'):
-        return px.bar(WomenWinners, x='season', y='WinRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'WinRate': True}, width=550, height=450)
+    if selected_parameter_women == 'distance from 2nd':
+        fig = px.bar(WomenWinners, x='season', y='distance from 2nd', color='Athlete',
+                        color_discrete_sequence=custom_colors,
+                        hover_data={'Wins': True, 'distance from 2nd': True})
+    elif selected_parameter_women == 'Avg points per race':
+        fig = px.bar(WomenWinners, x='season', y='Avg_Points_per_race', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'Avg_Points_per_race': True})
+    elif selected_parameter_women == 'Win Rate':
+        fig = px.bar(WomenWinners, x='season', y='WinRate', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'WinRate': True})
     else:
-        return px.bar(WomenWinners, x='season', y='PodiumRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'PodiumRate': True}, width=550, height=450)
+        fig = px.bar(WomenWinners, x='season', y='PodiumRate', color='Athlete',
+                     color_discrete_sequence=custom_colors,
+                     hover_data={'Wins': True, 'PodiumRate': True})
+    
+    # Aggiornamento del layout per ridurre la dimensione della legenda
+    fig.update_layout(
+        legend=dict(
+            font=dict(size=10),
+            itemsizing='constant'  # Riduce anche la dimensione dei quadratini della legenda
+        ),
+        margin=dict(l=20, r=20, t=20, b=20),  # Imposta margini piccoli per un migliore adattamento
+        plot_bgcolor='rgba(255, 255, 255, 0.8)',  # Colore di sfondo del grafico con trasparenza
+        paper_bgcolor='rgba(255, 255, 255, 0.5)',
+        
+    )
+    return fig
 
+
+# def choose_parameter_women(selected_parameter_women):
+#     if(selected_parameter_women == 'distance from 2nd'):
+#         return px.bar(WomenWinners, x='season', y='distance from 2nd',color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'distance from 2nd': True}, width=550, height=450)
+#     elif(selected_parameter_women == 'Avg points per race'):
+#         return px.bar(WomenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'Avg_Points_per_race': True}, width=550, height=450)
+#     elif(selected_parameter_women == 'Win Rate'):
+#         return px.bar(WomenWinners, x='season', y='WinRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'WinRate': True}, width=550, height=450)
+#     else:
+#         return px.bar(WomenWinners, x='season', y='PodiumRate', color='Athlete', color_discrete_sequence = custom_colors, hover_data={'Wins':True, 'PodiumRate': True}, width=550, height=450)
+bg_img = 'bg_img.jpg'
 app.layout = html.Div(
-    style={},
+    style={
+        'background-image': f'url("/assets/{bg_img}")',
+        'background-size': 'cover',
+        'background-position': 'center',
+        'background-repeat': 'no-repeat',
+        'height': '100vh',
+    },
     children=[
-         html.H1("Ski Data: Overall World Cup Winners", style={'text-align':'center','font-size':'30px'}),
-         dbc.Container(
-              children=[
-                   dbc.Row([
-                        dbc.Col(
-                            html.H1("Men", style={'text-align':'center', 'font-size':'20px'}),
-                            className="my-0"
-                        ),
-                        dbc.Col(
-                            html.H1("Women", style={'text-align':'center', 'font-size':'20px'}),
-                            className="my-0"                          
-                        ),
-                   ]),
-                   dbc.Row([
-                        dbc.Col(
-                             children=[
-                                html.P("Choose a parameter: ", style={'font-size':'15px'}, className="mx-2"),
-                                dcc.Dropdown(
-                                    id='select_parameter_men',
-                                    options=[
-                                        {'label':'distance from 2nd', 'value': 'distance from 2nd'},
-                                        {'label':'Avg points per race', 'value':'Avg points per race'},
-                                        {'label':'Win Rate', 'value': 'Win Rate'},
-                                        {'label':'Podium Rate', 'value': 'Podium Rate'}
-                                    ],
-                                    style={'width':'50%'},
-                                    className="mr-2"
-                                )
-                                ],
-                                className="d-flex justify-content-center my-0",
-                                style={'padding':'5px'}
-                        ), 
-                        dbc.Col(
-                            children=[
-                                html.P("Choose a parameter: ", style={'font-size':'15px'}, className="mx-2"),
-                                dcc.Dropdown(
-                                    id='select_parameter_women',
-                                    options=[
-                                        {'label':'distance from 2nd', 'value': 'distance from 2nd'},
-                                        {'label':'Avg points per race', 'value':'Avg points per race'},
-                                        {'label':'Win Rate', 'value': 'Win Rate'},
-                                        {'label':'Podium Rate', 'value': 'Podium Rate'}
-                                    ],
-                                    style={'width':'50%'},
-                                    className="mr-2"
-                                )
-                            ],
-                            className="d-flex justify-content-center my-0"
-                        )
-                   ]),
-                   dbc.Row([
-                        dbc.Col(
-                            children=[
-                                dcc.Graph(id="output_graph_men")
-                            ],
-                            className="my-0"
-                        ),
-                        dbc.Col(
-                            children=dcc.Graph(id="output_graph_women"),
-                            className="my-0"
-                        )
-                   ], className="d-flex justify-content-center")
-              ], fluid=True
-         )
-    ]
+        dbc.Container([
+            dbc.Row([
+                html.H1("Ski Data: Overall World Cup Winners", style={'text-align':'center','font-size':'30px', 'color':'white'})
+            ]),
+            dbc.Row([
+                dbc.Col(
+                    html.H1("Men", style={'text-align':'center', 'font-size':'20px', 'color':'white'})
+                ),
+                dbc.Col(
+                    html.H1("Women", style={'text-align':'center', 'font-size':'20px', 'color':'white'})                    
+                )
+            ], style={'color':'white'}),
+            dbc.Row([
+                dbc.Col([
+                    dcc.Dropdown(
+                        id='select_parameter_men',
+                        options=[
+                            {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
+                            {'label': 'Avg points per race', 'value': 'Avg points per race'},
+                            {'label': 'Win Rate', 'value': 'Win Rate'},
+                            {'label': 'Podium Rate', 'value': 'PodiumRate'}
+                        ],
+                        value='distance from 2nd'
+                    ),
+                    html.Div(
+                        dcc.Graph(id='graph_men'),
+                        style={'width': '100%', 'height': '100%', 'display': 'inline-block'}
+                    )
+                ], style={'width': '50%', 'display': 'inline-block'}),
+                dbc.Col([
+                    dcc.Dropdown(
+                        id='select_parameter_women',
+                        options=[
+                            {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
+                            {'label': 'Avg points per race', 'value': 'Avg points per race'},
+                            {'label': 'Win Rate', 'value': 'Win Rate'},
+                            {'label': 'Podium Rate', 'value': 'PodiumRate'}
+                        ],
+                        value='distance from 2nd'
+                    ),
+                    html.Div(
+                        dcc.Graph(id='graph_women'),
+                        style={'width': '100%', 'height': '100%', 'display': 'inline-block'}
+                    )
+                ]) 
+            ])
+        ],  fluid=True)]
 )
+
+# app.layout = html.Div(
+#     style={},
+#     children=[
+#          html.H1("Ski Data: Overall World Cup Winners", style={'text-align':'center','font-size':'30px'}),
+#          dbc.Container(
+#               children=[
+#                    dbc.Row([
+#                         dbc.Col(
+#                             html.H1("Men", style={'text-align':'center', 'font-size':'20px'}),
+#                             className="my-0"
+#                         ),
+#                         dbc.Col(
+#                             html.H1("Women", style={'text-align':'center', 'font-size':'20px'}),
+#                             className="my-0"                          
+#                         ),
+#                    ]),
+#                    dbc.Row([
+#                         dbc.Col(
+#                              children=[
+#                                 html.P("Choose a parameter: ", style={'font-size':'15px'}, className="mx-2"),
+#                                 dcc.Dropdown(
+#                                     id='select_parameter_men',
+#                                     options=[
+#                                         {'label':'distance from 2nd', 'value': 'distance from 2nd'},
+#                                         {'label':'Avg points per race', 'value':'Avg points per race'},
+#                                         {'label':'Win Rate', 'value': 'Win Rate'},
+#                                         {'label':'Podium Rate', 'value': 'Podium Rate'}
+#                                     ],
+#                                     style={'width':'50%'},
+#                                     className="mr-2"
+#                                 )
+#                                 ],
+#                                 className="d-flex justify-content-center my-0",
+#                                 style={'padding':'5px'}
+#                         ), 
+#                         dbc.Col(
+#                             children=[
+#                                 html.P("Choose a parameter: ", style={'font-size':'15px'}, className="mx-2"),
+#                                 dcc.Dropdown(
+#                                     id='select_parameter_women',
+#                                     options=[
+#                                         {'label':'distance from 2nd', 'value': 'distance from 2nd'},
+#                                         {'label':'Avg points per race', 'value':'Avg points per race'},
+#                                         {'label':'Win Rate', 'value': 'Win Rate'},
+#                                         {'label':'Podium Rate', 'value': 'Podium Rate'}
+#                                     ],
+#                                     style={'width':'50%'},
+#                                     className="mr-2"
+#                                 )
+#                             ],
+#                             className="d-flex justify-content-center my-0"
+#                         )
+#                    ]),
+#                    dbc.Row([
+#                         dbc.Col(
+#                             children=[
+#                                 dcc.Graph(id="output_graph_men")
+#                             ],
+#                             className="my-0"
+#                         ),
+#                         dbc.Col(
+#                             children=dcc.Graph(id="output_graph_women"),
+#                             className="my-0"
+#                         )
+#                    ], className="d-flex justify-content-center")
+#               ], fluid=True
+#          )
+#     ]
+# )
 
 
 # fig = px.scatter(MenWinners, x='season', y='Points', color='Athlete', color_discrete_sequence=px.colors.qualitative.D3, size='Wins', hover_data={'Wins':True, 'Top3':True, 'Athlete':True}, width=800, height=500)
