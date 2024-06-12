@@ -8,7 +8,7 @@ import plotly.graph_objs as go #type:ignore
 from dash.exceptions import PreventUpdate #type:ignore
 from dash.exceptions import CallbackException #type:ignore
 
-from dash.dependencies import Input, Output #type:ignore
+from dash.dependencies import Input, Output, State #type:ignore
 from dash import dcc, html, Dash #type: ignore
 
 bg_img = 'bg_img.jpg'
@@ -37,6 +37,7 @@ MenWinners = MenWinners.apply(fun.update_top10_m, axis=1)
 
 for element in MenWinners:
     MenWinners['Races'] = MenWinners.Races.astype(int)
+    MenWinners['Athlete'] = MenWinners.Athlete.astype("string").astype(str)
     MenWinners['Wins'] = MenWinners.Wins.astype(int)
     MenWinners['Top3'] = MenWinners.Top3.astype(int)
     MenWinners['Avg_Points_per_race'] = MenWinners['Points'] / MenWinners['Races']
@@ -68,6 +69,7 @@ WomenWinners = WomenWinners.apply(fun.update_top10_f, axis=1)
 
 for element in WomenWinners:
     WomenWinners['Races'] = WomenWinners.Races.astype(int)
+    WomenWinners['Athlete'] = WomenWinners.Athlete.astype("string").astype(str)
     WomenWinners['Wins'] = MenWinners.Wins.astype(int)
     WomenWinners['Top3'] = MenWinners.Top3.astype(int)
     WomenWinners['Avg_Points_per_race'] = WomenWinners['Points'] / WomenWinners['Races']
@@ -76,11 +78,33 @@ for element in WomenWinners:
     WomenWinners['PodiumRate'] = WomenWinners['Top3'] / WomenWinners['Races']
 WomenWinners.drop(columns=['Rank'], inplace=True)
 
+MenSunburst = MenWinners.copy()
+MenSunburst['Athlete'] = MenSunburst['Athlete'].apply(lambda x: x[:-4] if isinstance(x, str) else x)
+
+WomenSunburst = WomenWinners.copy()
+WomenSunburst['Athlete'] = WomenSunburst['Athlete'].apply(lambda x: x[:-4] if isinstance(x, str) else x)
+
 # Colors used in the barchartss
 custom_colors = ['#0000FF', '#607D3B', '#FF0000', '#FFD700', '#FF00FF', '#99CBFF', '#00FF00', '#800000', '#808000', '#800080',
     '#008080', '#020181', '#03C04A', '#E5BE01', '#FFC0CB', '#B57FDD', '#6A76FC', '#FF9900']
 
+sun1 = px.sunburst(MenSunburst, path=['Nat', 'Athlete', 'Points'], values='season')
+sun2 = px.sunburst(WomenSunburst, path=['Nat', 'Athlete', 'Points'], values='season')
+
+sun1.update_layout(
+        margin=dict(l=20, r=20, t=20, b=20),  
+        plot_bgcolor='rgba(255, 255, 255, 0.8)',  
+        paper_bgcolor='rgba(255, 255, 255, 0.5)'
+)
+sun2.update_layout(
+        margin=dict(l=20, r=20, t=20, b=20),  
+        plot_bgcolor='rgba(255, 255, 255, 0.8)',  
+        paper_bgcolor='rgba(255, 255, 255, 0.5)'
+)
+
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
 
 @app.callback(
     Output('graph_men', 'figure'),
@@ -175,64 +199,133 @@ def choose_parameter_women(selected_parameter_women):
     )
     return fig
 
-
-app.layout = html.Div(
-    style={
-        'background-image': f'url("/assets/{bg_img}")',
-        'background-size': 'cover',
-        'background-position': 'center',
-        'background-repeat': 'no-repeat',
-        'height': '100vh',
-    },
-    children=[
-        dbc.Container([
-            dbc.Row([
-                html.H1("Ski Data: Overall World Cup Winners", style={'text-align':'center','font-size':'30px', 'color':'white'})
-            ]),
-            dbc.Row([
-                dbc.Col(
-                    html.H1("Men", style={'text-align':'center', 'font-size':'20px', 'color':'white'})
-                ),
-                dbc.Col(
-                    html.H1("Women", style={'text-align':'center', 'font-size':'20px', 'color':'white'})                    
-                )
-            ], style={'color':'white'}),
-            dbc.Row([
-                dbc.Col([
-                    dcc.Dropdown(
-                        id='select_parameter_men',
-                        options=[
-                            {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
-                            {'label': 'Avg points per race', 'value': 'Avg points per race'},
-                            {'label': 'Win Rate', 'value': 'Win Rate'},
-                            {'label': 'Podium Rate', 'value': 'PodiumRate'}
-                        ],
-                        value='distance from 2nd'
+def main_layout():
+    return html.Div(
+        style={
+            'background-image': f'url("/assets/{bg_img}")',
+            'background-size': 'cover',
+            'background-position': 'center',
+            'background-repeat': 'no-repeat',
+            'height': '100vh',
+        },
+        children=[
+            dbc.Container([
+                dbc.Row([
+                    html.H1("Ski Data: Overall World Cup Winners", style={'text-align':'center','font-size':'30px', 'color':'white'})
+                ]),
+                dbc.Row([
+                    dbc.ButtonGroup([
+                        dbc.Button("Nations", id="btn-line-plot", color="primary", className="mt-3", size='sm'),
+                        dbc.Button("Individual", id="btn-back-main", color="primary", className="mt-3", size='sm')
+                    ])
+                ], className="d-flex justify-content-center"),
+                dbc.Row([
+                    dbc.Col(
+                        html.H1("Men", style={'text-align':'center', 'font-size':'15px', 'color':'white'})
                     ),
-                    html.Div(
-                        dcc.Graph(id='graph_men'),
-                        style={'width': '100%', 'height': '100%', 'display': 'inline-block'}
+                    dbc.Col(
+                        html.H1("Women", style={'text-align':'center', 'font-size':'15px', 'color':'white'})                    
                     )
-                ], style={'width': '50%', 'display': 'inline-block'}),
-                dbc.Col([
-                    dcc.Dropdown(
-                        id='select_parameter_women',
-                        options=[
-                            {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
-                            {'label': 'Avg points per race', 'value': 'Avg points per race'},
-                            {'label': 'Win Rate', 'value': 'Win Rate'},
-                            {'label': 'Podium Rate', 'value': 'PodiumRate'}
-                        ],
-                        value='distance from 2nd'
-                    ),
-                    html.Div(
-                        dcc.Graph(id='graph_women'),
-                        style={'width': '100%', 'height': '100%', 'display': 'inline-block'}
-                    )
-                ]) 
-            ], className="d-flex justify-content-center")
-        ],  fluid=True)]
+                ], style={'color':'white'}),
+                dbc.Row([
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id='select_parameter_men',
+                            options=[
+                                {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
+                                {'label': 'Avg points per race', 'value': 'Avg points per race'},
+                                {'label': 'Win Rate', 'value': 'Win Rate'},
+                                {'label': 'Podium Rate', 'value': 'PodiumRate'}
+                            ],
+                            value='distance from 2nd'
+                        ),
+                        html.Div(
+                            dcc.Graph(id='graph_men'),
+                            style={'width': '100%', 'height': '95%'}
+                        )
+                    ], style={'width': '50%', 'display': 'inline-block'}),
+                    dbc.Col([
+                        dcc.Dropdown(
+                            id='select_parameter_women',
+                            options=[
+                                {'label': 'Distance from 2nd', 'value': 'distance from 2nd'},
+                                {'label': 'Avg points per race', 'value': 'Avg points per race'},
+                                {'label': 'Win Rate', 'value': 'Win Rate'},
+                                {'label': 'Podium Rate', 'value': 'PodiumRate'}
+                            ],
+                            value='distance from 2nd'
+                        ),
+                        html.Div(
+                            dcc.Graph(id='graph_women'),
+                            style={'width': '100%', 'height': '95%'}
+                        )
+                    ], style={'width': '50%', 'display': 'inline-block'}) 
+                ], className="d-flex justify-content-center")
+            ],  fluid=True)]
 )
 
-# fig = px.scatter(MenWinners, x='season', y='Points', color='Athlete', color_discrete_sequence=px.colors.qualitative.D3, size='Wins', hover_data={'Wins':True, 'Top3':True, 'Athlete':True}, width=800, height=500)
+def second_layout():
+    return html.Div(
+        style={
+            'background-image': f'url("/assets/{bg_img}")',
+            'background-size': 'cover',
+            'background-position': 'center',
+            'background-repeat': 'no-repeat',
+            'height': '100vh',
+        },
+        children=[
+            dbc.Container([
+                dbc.Row([
+                    html.H1("Overall World Cup Winners and their nations", style={'text-align':'center','font-size':'30px', 'color':'white'})
+                ]),
+                dbc.Row([
+                    dbc.ButtonGroup([
+                        dbc.Button("Nations", id="btn-line-plot", color="primary", className="mt-3", size='sm'),
+                        dbc.Button("Individual", id="btn-back-main", color="primary", className="mt-3", size='sm')
+                    ], className='mr-2')
+                ]),
+                dbc.Row([
+                    dbc.Col(
+                        html.H1("Men", style={'text-align':'center', 'font-size':'15px', 'color':'white'})
+                    ),
+                    dbc.Col(
+                        html.H1("Women", style={'text-align':'center', 'font-size':'15px', 'color':'white'})                    
+                    )
+                ], style={'color':'white'}),
+                dbc.Row([
+                    dbc.Col([
+                        dcc.Graph(figure=sun1)
+                    ]),
+                    dbc.Col([
+                        dcc.Graph(figure=sun2)
+                    ])
+                ], 
+                className="d-flex justify-content-center"),
+            ], fluid=True)]
+)
+
+app.layout = html.Div(id='page-content', children=main_layout())
+
+#Callback to set the navigation between two sides
+@app.callback(
+    Output('page-content', 'children'),
+    [Input('btn-line-plot', 'n_clicks'),
+    Input('btn-back-main', 'n_clicks')],
+    [State('page-content', 'children')]
+)
+
+def display_page(btn_line, btn_back, current_layout):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        return current_layout
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+        if button_id == 'btn-line-plot':
+            return second_layout()
+        elif button_id == 'btn-back-main':
+            return main_layout()
+        else:
+            return current_layout
+
 app.run_server(debug=True)
