@@ -7,7 +7,6 @@ import dash_bootstrap_components as dbc #type: ignore
 import plotly.graph_objs as go #type:ignore
 from dash.exceptions import PreventUpdate #type:ignore
 from dash.exceptions import CallbackException #type:ignore
-
 from dash.dependencies import Input, Output, State #type:ignore
 from dash import dcc, html, Dash #type: ignore
 
@@ -35,6 +34,7 @@ MenWinners['Races'] = MenWinners.apply(fun.fill_value_m, axis=1)
 MenWinners = MenWinners.apply(fun.update_top3_m, axis=1)
 MenWinners = MenWinners.apply(fun.update_top10_m, axis=1)
 
+# Elaborate new data
 for element in MenWinners:
     MenWinners['Races'] = MenWinners.Races.astype(int)
     MenWinners['Athlete'] = MenWinners.Athlete.astype("string").astype(str)
@@ -47,7 +47,6 @@ for element in MenWinners:
 MenWinners.drop(columns=['Rank'], inplace=True)
 
 Women = fun.new_dict(women_dir_path)
-
 for i, df in enumerate(Women):
         single_df = f"df_{i}"
         globals()[single_df] = df
@@ -67,6 +66,7 @@ WomenWinners['Races'] = WomenWinners.apply(fun.fill_value_f, axis=1)
 WomenWinners = WomenWinners.apply(fun.update_top3_f, axis=1)
 WomenWinners = WomenWinners.apply(fun.update_top10_f, axis=1)
 
+# Elaborate new data
 for element in WomenWinners:
     WomenWinners['Races'] = WomenWinners.Races.astype(int)
     WomenWinners['Athlete'] = WomenWinners.Athlete.astype("string").astype(str)
@@ -104,7 +104,6 @@ sun2.update_layout(
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
 
 @app.callback(
     Output('graph_men', 'figure'),
@@ -306,7 +305,7 @@ def second_layout():
 
 app.layout = html.Div(id='page-content', children=main_layout())
 
-#Callback to set the navigation between two sides
+# Callback to set the navigation between two sides
 @app.callback(
     Output('page-content', 'children'),
     [Input('btn-line-plot', 'n_clicks'),

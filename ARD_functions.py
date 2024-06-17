@@ -1,9 +1,11 @@
 import pandas as pd #type: ignore
+# Libraries used to import data
 import re
 import os
 from bs4 import BeautifulSoup #type:ignore
 from io import StringIO
 
+# Dictionaries to fix data and add new columns
 def define_position(argument):
   switcher ={
     ".31":31,
@@ -227,30 +229,6 @@ Place = {
     "Kitzbuhel": 0.8
   }
 
-def Dict(filepath):
-  var = open(filepath, 'r')
-  attr = {'id': 'stripedTable1'}
-  lines = var.readlines()
-  links = []
-  for line in lines:
-    links.append(line.strip())
-  dict = {}
-  for i, link in enumerate(links):
-    table = pd.read_html(link, attrs = attr)
-    data_table = table[0]
-    data_table.dropna(inplace=True)
-    # Using regular expressions to get the season and add it to df
-    pattern = r'/(?P<numeri>\d{2})/'
-    match = re.findall(pattern, link)
-    season_number = get_season(match[0])
-    data_table['season'] = season_number
-    dict[f"df_{i}"] = data_table
-    keys_list = list(dict.keys())
-    values_list = list(dict.values())
-  return values_list
-
-
-
 def new_dict(dir_path):
   table_class = 'skidb'
   dataframes = []
@@ -269,8 +247,7 @@ def new_dict(dir_path):
             string = StringIO(str(table))
             # Use pandas to read HTML table
             df = pd.read_html(string)[0]
-            #df.dropna(inplace=True)
-            # Using regular expressions to get the season and add it to df
+            # Using regular expressions to get the season and add it to df as a value of the homonymous column
             pattern = r'\d{4}_'
             match = re.findall(pattern, filename)
             season_number = get_season(match[0])
@@ -278,36 +255,3 @@ def new_dict(dir_path):
             dataframes.append(df)
   return dataframes
 
-
-def Dict2(filepath):
-  var = open(filepath, 'r')
-  attr = {'class': 'skidb'}
-  lines = var.readlines()
-  links = []
-  for line in lines:
-    links.append(line.strip())
-  dict = {}
-  for i, link in enumerate(links):
-    table = pd.read_html(link, attrs = attr)
-    data_table = table[0]
-    data_table["Wins"] = data_table["Wins"].fillna("0")
-    data_table["Top3"] = data_table["Wins"].fillna("0")
-    data_table["Top10"] = data_table["Wins"].fillna("0")
-    data_table["Wins"] = data_table.Wins.astype(float).astype(int)
-    # Using regular expressions to get the season and add it to df
-    pattern = r'/(?P<numeri>\d{2})/'
-    match = re.findall(pattern, link)
-    season_number = get_season(match[0])
-    data_table['season'] = season_number
-    dict[f"df_{i}"] = data_table
-    values_list = list(dict.values())
-  return values_list
-
-def DeleteData(df):
-  count = df.groupby(['season', 'location']).size()
-  correct_data = count[count == 2].index
-  df = df[df.apply(lambda row: (row['season'], row['location']) in correct_data, axis = 1)]
-  return df
-
-    
-    
