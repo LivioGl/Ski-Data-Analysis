@@ -112,7 +112,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 def choose_parameter_men(selected_parameter_men):
     if selected_parameter_men == 'distance from 2nd':
-        fig = px.bar(MenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'distance from 2nd': True})
+        fig = px.bar(MenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'distance from 2nd': True, 'main_opponent':True})
     elif selected_parameter_men == 'Avg points per race':
         fig = px.bar(MenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'Avg_Points_per_race': True})
     elif selected_parameter_men == 'Win Rate':
@@ -159,7 +159,7 @@ def choose_parameter_men(selected_parameter_men):
 
 def choose_parameter_women(selected_parameter_women):
     if selected_parameter_women == 'distance from 2nd':
-        fig = px.bar(WomenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'distance from 2nd': True})
+        fig = px.bar(WomenWinners, x='season', y='distance from 2nd', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'distance from 2nd': True, 'main_opponent':True})
     elif selected_parameter_women == 'Avg points per race':
         fig = px.bar(WomenWinners, x='season', y='Avg_Points_per_race', color='Athlete', color_discrete_sequence=custom_colors, hover_data={'Wins': True, 'Avg_Points_per_race': True})
     elif selected_parameter_women == 'Win Rate':
